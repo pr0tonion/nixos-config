@@ -62,7 +62,7 @@
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = true; # Enable for VM testing
+      PasswordAuthentication = lib.mkForce true; # Enable for VM testing
       PermitRootLogin = "no";
     };
   };
