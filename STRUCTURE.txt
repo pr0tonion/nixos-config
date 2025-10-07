@@ -1,0 +1,275 @@
+NixOS Home Server Configuration - Directory Structure
+=====================================================
+
+nixos-config/
+│
+├── flake.nix                          # Main flake configuration with inputs and outputs
+├── flake.lock                         # (auto-generated) Locked dependency versions
+│
+├── README.md                          # Project overview and documentation
+├── QUICK_START.md                     # Quick installation guide
+├── PROJECT_SUMMARY.md                 # Complete project summary
+├── .gitignore                         # Git ignore rules
+│
+├── hosts/                             # Host-specific configurations
+│   │
+│   ├── home-server/                   # Main home server configuration
+│   │   ├── configuration.nix          # Server-specific settings (hostname, timezone, etc.)
+│   │   └── hardware-configuration.nix # Hardware detection (will be generated during install)
+│   │
+│   └── home-computer/                 # Future home computer (skeleton for later use)
+│       └── configuration.nix          # Basic desktop configuration template
+│
+├── modules/                           # Modular system configuration
+│   │
+│   ├── base.nix                       # Base system packages and settings
+│   │                                  # - Essential CLI tools
+│   │                                  # - SMART disk monitoring
+│   │                                  # - Log management
+│   │                                  # - Periodic TRIM for SSDs
+│   │
+│   ├── networking.nix                 # Network configuration
+│   │                                  # - systemd-networkd setup
+│   │                                  # - Firewall base config
+│   │                                  # - Wake-on-LAN support
+│   │                                  # - Avahi for local discovery
+│   │
+│   ├── users.nix                      # User and group management
+│   │                                  # - admin user (sudo access)
+│   │                                  # - Service users (media, transmission, etc.)
+│   │                                  # - SSH configuration
+│   │                                  # - Directory permissions
+│   │
+│   ├── services/                      # Service module directory
+│   │   │
+│   │   ├── plex.nix                   # Plex Media Server
+│   │   │                              # - Hardware transcoding (Intel GPU)
+│   │   │                              # - Port configuration (32400)
+│   │   │                              # - Media library access
+│   │   │                              # - Resource limits
+│   │   │
+│   │   ├── media-automation.nix       # *arr suite automation
+│   │   │                              # - Sonarr (TV shows) - port 8989
+│   │   │                              # - Radarr (Movies) - port 7878
+│   │   │                              # - Prowlarr (Indexers) - port 9696
+│   │   │                              # - Jellyseerr (Requests) - port 5055
+│   │   │
+│   │   ├── torrent.nix                # Transmission BitTorrent client
+│   │   │                              # - Web UI - port 9091
+│   │   │                              # - Peer port 51413
+│   │   │                              # - Private tracker optimized
+│   │   │                              # - Download management
+│   │   │                              # - VPN kill-switch ready
+│   │   │
+│   │   ├── vpn.nix                    # VPN configuration
+│   │   │                              # - Tailscale (primary, enabled)
+│   │   │                              # - WireGuard (alternative, commented)
+│   │   │                              # - Subnet routing support
+│   │   │                              # - Exit node configuration
+│   │   │
+│   │   ├── monitoring.nix             # Monitoring stack
+│   │   │                              # - Prometheus (metrics) - port 9090
+│   │   │                              # - Grafana (dashboards) - port 3000
+│   │   │                              # - Loki (logs) - port 3100
+│   │   │                              # - Promtail (log shipper)
+│   │   │                              # - Node exporter - port 9100
+│   │   │                              # - SMART exporter - port 9633
+│   │   │
+│   │   └── dashboard.nix              # Homepage Dashboard
+│   │                                  # - Service overview - port 3001
+│   │                                  # - Widgets and bookmarks
+│   │                                  # - Resource monitoring
+│   │
+│   └── maintenance/                   # Maintenance and automation
+│       └── cleanup.nix                # Automated cleanup tasks
+│                                      # - Old media cleanup (6 months)
+│                                      # - Download cleanup (daily)
+│                                      # - Temporary file removal
+│                                      # - Log rotation
+│
+├── home/                              # Home Manager user configurations
+│   └── admin.nix                      # Admin user environment
+│                                      # - Bash configuration with aliases
+│                                      # - Git setup
+│                                      # - Neovim with GitHub config
+│                                      # - Starship prompt
+│                                      # - Useful CLI tools
+│
+└── documentation/                     # Comprehensive documentation
+    │
+    ├── 00-iso-generation.md           # Creating bootable installation USB
+    │                                  # - Building ISO from flake
+    │                                  # - Using standard NixOS ISO
+    │                                  # - Writing to USB (Linux/macOS/Windows)
+    │                                  # - Boot troubleshooting
+    │
+    ├── 01-installation.md             # Complete installation guide
+    │                                  # - Disk partitioning (UEFI/Legacy)
+    │                                  # - Filesystem setup
+    │                                  # - Configuration deployment
+    │                                  # - Initial service setup
+    │                                  # - Post-installation tasks
+    │
+    ├── 02-user-management.md          # Managing users and permissions
+    │                                  # - Adding admin users
+    │                                  # - Adding regular users
+    │                                  # - SSH key management
+    │                                  # - Group permissions
+    │                                  # - Sudo configuration
+    │
+    ├── 03-private-trackers.md         # Setting up private torrent trackers
+    │                                  # - Transmission configuration
+    │                                  # - Prowlarr tracker setup
+    │                                  # - Ratio management
+    │                                  # - VPN integration
+    │                                  # - Troubleshooting
+    │
+    ├── 04-network-management.md       # Network configuration guide
+    │                                  # - Service ports reference
+    │                                  # - Changing ports
+    │                                  # - Firewall management
+    │                                  # - Static IP setup
+    │                                  # - Wake-on-LAN
+    │                                  # - Port forwarding (not recommended)
+    │
+    ├── 05-remote-access.md            # Remote access configuration
+    │                                  # - Tailscale setup and usage
+    │                                  # - SSH remote access
+    │                                  # - Subnet routing
+    │                                  # - Exit node configuration
+    │                                  # - Mobile app setup
+    │                                  # - WireGuard alternative
+    │
+    ├── 06-deployment.md               # Testing and deployment strategies
+    │                                  # - Testing in VMs
+    │                                  # - SSH deployment
+    │                                  # - Rollback procedures
+    │                                  # - Backup strategies
+    │                                  # - Migration to new hardware
+    │                                  # - Continuous deployment
+    │
+    └── 07-next-steps.md               # Improvements and future work
+                                       # - Post-installation tasks
+                                       # - Known issues to fix
+                                       # - Recommended improvements
+                                       # - Missing features
+                                       # - Performance optimizations
+                                       # - Additional services to consider
+
+Runtime Directory Structure (Created on Server):
+================================================
+
+/srv/media/                            # Media storage directory
+    ├── movies/                        # Movie library (for Radarr/Plex)
+    ├── tv/                            # TV show library (for Sonarr/Plex)
+    └── downloads/                     # Download management
+        ├── complete/                  # Completed downloads
+        ├── incomplete/                # In-progress downloads
+        └── watch/                     # Torrent watch directory
+
+/var/lib/                              # Service data directories
+    ├── plex/                          # Plex database and metadata
+    ├── sonarr/                        # Sonarr configuration and database
+    ├── radarr/                        # Radarr configuration and database
+    ├── prowlarr/                      # Prowlarr settings
+    ├── transmission/                  # Transmission state and settings
+    ├── grafana/                       # Grafana dashboards and data
+    ├── prometheus/                    # Prometheus metrics storage
+    └── loki/                          # Loki log storage
+
+/etc/nixos-config/                     # This configuration (deployed to server)
+/etc/nixos/scripts/                    # Maintenance scripts
+    ├── cleanup-media.sh               # Media cleanup script
+    └── cleanup-downloads.sh           # Download cleanup script
+
+/etc/homepage/                         # Homepage dashboard config
+    └── env                            # API tokens for services
+
+Service Ports Summary:
+=====================
+
+LAN + Tailscale Access:
+- SSH:          22
+- Plex:         32400
+- Sonarr:       8989
+- Radarr:       7878
+- Prowlarr:     9696
+- Jellyseerr:   5055
+- Transmission: 9091
+- Grafana:      3000
+- Prometheus:   9090
+- Homepage:     3001
+- Loki:         3100
+- Node Exp:     9100
+- SMART Exp:    9633
+
+Key Features:
+=============
+
+✅ Complete media automation (request → download → organize → stream)
+✅ Hardware-accelerated transcoding (Intel GPU)
+✅ Private tracker support (DHT/PEX disabled)
+✅ Secure remote access (Tailscale VPN)
+✅ Comprehensive monitoring (Prometheus + Grafana + Loki)
+✅ Automated maintenance (cleanup + log rotation)
+✅ User management (admin + service users)
+✅ Wake-on-LAN support
+✅ Firewall protection (LAN-only services)
+✅ Modular configuration (easy to customize)
+✅ Complete documentation (8 detailed guides)
+✅ Rollback capability (NixOS generations)
+✅ Reproducible builds (Nix flakes)
+
+Service Integration Flow:
+=========================
+
+User Request → Jellyseerr → Sonarr/Radarr → Prowlarr → Torrent Trackers
+                                ↓
+                         Transmission (download)
+                                ↓
+                    /srv/media/downloads/complete
+                                ↓
+                         Sonarr/Radarr (process)
+                                ↓
+                      /srv/media/movies or /tv
+                                ↓
+                              Plex
+                                ↓
+                          User streams
+
+Monitoring Flow:
+===============
+
+Services → Prometheus → Grafana (dashboards)
+Logs → Promtail → Loki → Grafana (log viewer)
+System → Node Exporter → Prometheus
+Disks → SMART Exporter → Prometheus
+
+Access Flow:
+===========
+
+Remote User → Tailscale VPN → Home Network → Services
+Local User → Home Network → Services (direct)
+Mobile App → Tailscale → Services (as if on LAN)
+
+Security Layers:
+===============
+
+1. Firewall (only LAN ports open)
+2. Tailscale VPN (encrypted tunnel)
+3. SSH keys only (no password auth)
+4. Service users (isolated permissions)
+5. Resource limits (prevent DoS)
+6. No root login (SSH)
+7. Regular updates (nixpkgs)
+
+Maintenance Schedule:
+====================
+
+Daily:    Downloads cleanup, log collection
+Weekly:   Media cleanup check, nix garbage collection
+Monthly:  System updates (nix flake update)
+Quarterly: Security audit, user review
+Yearly:   Hardware check, backup test
+
+Ready to Deploy! 🚀

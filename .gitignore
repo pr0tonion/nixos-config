@@ -1,0 +1,26 @@
+# NixOS build outputs
+result
+result-*
+
+# Hardware configuration (contains machine-specific info)
+# Uncomment if you don't want to commit hardware configs
+# hosts/*/hardware-configuration.nix
+
+# Secrets and passwords
+*.secret
+*.key
+*.pem
+/etc/grafana/admin-password
+/etc/homepage/env
+
+# Local testing
+.direnv/
+.envrc
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
