@@ -17,8 +17,25 @@
   networking.hostName = "home-computer";
 
   # Timezone and locale
-  time.timeZone = "UTC"; # Change to your timezone
-  i18n.defaultLocale = "en_US.UTF-8";
+  time.timeZone = "Europe/Oslo";
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_TIME = "nb_NO.UTF-8";
+      LC_MONETARY = "nb_NO.UTF-8";
+      LC_MEASUREMENT = "nb_NO.UTF-8";
+      LC_PAPER = "nb_NO.UTF-8";
+    };
+  };
+
+  # Norwegian keyboard layout
+  console.keyMap = "no";
+
+  # X11 keyboard layout (for GUI)
+  services.xserver.xkb = {
+    layout = "no";
+    variant = "";
+  };
 
   # System state version
   system.stateVersion = "24.05";

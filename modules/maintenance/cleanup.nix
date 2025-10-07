@@ -49,9 +49,12 @@
     };
   };
 
-  # Create cleanup scripts directory
+  # Create cleanup scripts directory and log files
   systemd.tmpfiles.rules = [
     "d /etc/nixos/scripts 0755 root root -"
+    "d /var/log 0755 root root -"
+    "f /var/log/media-cleanup.log 0644 media media -"
+    "f /var/log/downloads-cleanup.log 0644 transmission transmission -"
   ];
 
   # Create the cleanup scripts
@@ -124,13 +127,6 @@
     '';
     mode = "0755";
   };
-
-  # Create log directory
-  systemd.tmpfiles.rules = [
-    "d /var/log 0755 root root -"
-    "f /var/log/media-cleanup.log 0644 media media -"
-    "f /var/log/downloads-cleanup.log 0644 transmission transmission -"
-  ];
 
   # Log rotation for cleanup logs
   services.logrotate = {
