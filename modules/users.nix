@@ -37,16 +37,8 @@
     gid = 1500; # Fixed GID for consistency
   };
 
-  # Service user for torrent client
-  users.users.transmission = {
-    isSystemUser = true;
-    description = "Transmission Torrent User";
-    group = "transmission";
-  };
-
-  users.groups.transmission = {
-    gid = 1501; # Fixed GID
-  };
+  # NOTE: Transmission user/group is created automatically by services.transmission
+  # No need to define it here - it would conflict with the service module
 
   # Service user for VPN (if needed for specific VPN setups)
   users.users.vpn = {
