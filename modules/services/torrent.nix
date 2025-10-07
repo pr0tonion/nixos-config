@@ -92,9 +92,9 @@
       # Security hardening
       PrivateTmp = true;
       NoNewPrivileges = true;
-      PrivateDevices = false; # Need access to network devices
+      PrivateDevices = lib.mkForce false; # Need access to network devices
       ProtectSystem = "strict";
-      ProtectHome = true;
+      ProtectHome = lib.mkForce true;
 
       # Allow write to media directories
       ReadWritePaths = [
@@ -107,7 +107,7 @@
       CPUQuota = "200%"; # 2 cores max
 
       # Ensure media group can access downloaded files
-      UMask = "0002";
+      UMask = lib.mkForce "0002";
     };
   };
 

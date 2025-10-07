@@ -119,9 +119,9 @@
       schema_config = {
         configs = [{
           from = "2024-01-01";
-          store = "boltdb-shipper";
+          store = "tsdb";
           object_store = "filesystem";
-          schema = "v11";
+          schema = "v13";
           index = {
             prefix = "index_";
             period = "24h";
@@ -130,14 +130,19 @@
       };
 
       storage_config = {
-        boltdb_shipper = {
+        tsdb_shipper = {
           active_index_directory = "/var/lib/loki/index";
           cache_location = "/var/lib/loki/cache";
-          shared_store = "filesystem";
         };
         filesystem = {
           directory = "/var/lib/loki/chunks";
         };
+      };
+
+      compactor = {
+        working_directory = "/var/lib/loki/compactor";
+        retention_enabled = true;
+        delete_request_store = "filesystem";
       };
 
       limits_config = {

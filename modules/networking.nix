@@ -3,6 +3,7 @@
 {
   # Enable networking
   networking.networkmanager.enable = false; # Using systemd-networkd for servers
+  networking.useNetworkd = true;
   systemd.network.enable = true;
 
   # Enable resolved for DNS
