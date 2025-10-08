@@ -185,6 +185,7 @@
   # Allow insecure hosts for local services
   systemd.services.homepage-dashboard.environment = {
     HOMEPAGE_ALLOW_INSECURE_HOSTS = "true";
+    HOMEPAGE_ALLOWED_HOSTS = "192.168.1.145";
   };
 
   # Create environment file directory
