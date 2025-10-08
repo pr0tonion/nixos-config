@@ -92,8 +92,8 @@
 
   # Enable guest additions for better VM integration
   virtualisation.vmware.guest.enable = lib.mkDefault false;
-  virtualisation.virtualbox.guest.enable = lib.mkDefault false;
+  virtualisation.virtualbox.guest.enable = true;
 
   # QEMU guest agent (if using QEMU/KVM)
-  services.qemuGuest.enable = lib.mkDefault true;
+  services.qemuGuest.enable = lib.mkDefault false;
 }
