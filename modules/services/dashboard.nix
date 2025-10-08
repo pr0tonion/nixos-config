@@ -185,7 +185,8 @@
   # Allow insecure hosts for local services
   systemd.services.homepage-dashboard.environment = {
     HOMEPAGE_ALLOW_INSECURE_HOSTS = "true";
-    HOMEPAGE_ALLOWED_HOSTS = "192.168.1.145";
+    # Append to default allowed hosts (localhost:8082,127.0.0.1:8082)
+    HOMEPAGE_ALLOWED_HOSTS = lib.mkForce "localhost:8082,127.0.0.1:8082,192.168.1.145:3001,localhost:3001";
   };
 
   # Create environment file directory
