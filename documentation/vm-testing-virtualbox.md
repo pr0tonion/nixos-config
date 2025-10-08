@@ -197,7 +197,7 @@ nix-shell -p git
 
 # Clone your configuration
 # Replace YOUR-USERNAME with your GitHub username
-git clone https://github.com/YOUR-USERNAME/nixos-config.git /mnt/etc/nixos
+git clone https://github.com/pr0tonion/nixos-config.git /mnt/etc/nixos
 
 # Generate hardware configuration
 nixos-generate-config --root /mnt

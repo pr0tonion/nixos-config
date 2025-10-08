@@ -182,6 +182,11 @@
     EnvironmentFile = lib.mkDefault "/etc/homepage/env";
   };
 
+  # Allow insecure hosts for local services
+  systemd.services.homepage-dashboard.environment = {
+    HOMEPAGE_ALLOW_INSECURE_HOSTS = "true";
+  };
+
   # Create environment file directory
   systemd.tmpfiles.rules = [
     "d /etc/homepage 0755 root root -"
