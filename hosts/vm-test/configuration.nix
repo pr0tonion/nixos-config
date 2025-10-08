@@ -87,6 +87,10 @@
   systemd.services.prometheus.serviceConfig.MemoryMax = lib.mkForce "512M";
   systemd.services.grafana.serviceConfig.MemoryMax = lib.mkForce "512M";
 
+  # Disable smartd in VM (VirtualBox disks don't support SMART)
+  services.smartd.enable = lib.mkForce false;
+  services.prometheus.exporters.smartctl.enable = lib.mkForce false;
+
   # For VM testing, you might want to use smaller media files
   # or mount a shared folder from host
 
