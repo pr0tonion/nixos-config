@@ -73,15 +73,25 @@
         ];
       };
 
-      # Home Computer Configuration (skeleton for future use)
+      # Home Computer Configuration
       home-computer = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs pkgs-unstable; };
         modules = [
           ./hosts/home-computer/configuration.nix
           ./modules/base.nix
-          ./modules/networking.nix
-          ./modules/users.nix
+          ./modules/desktop/gpu.nix
+          ./modules/desktop/audio.nix
+          ./modules/desktop/plasma.nix
+          ./modules/desktop/applications.nix
+
+          # Home Manager integration
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.admin = import ./home/admin.nix;
+          }
         ];
       };
 

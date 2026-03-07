@@ -1,0 +1,12 @@
+- Git
+- LazyGit
+- Neovim
+- Google Chrome
+- Discord
+- Steam
+- Alacritty
+- Android Studio
+- Python 3.13
+- Node
+- Visual stuio code
+- Krohnkite tiling manager

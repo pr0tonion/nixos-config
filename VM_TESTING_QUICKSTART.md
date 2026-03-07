@@ -48,7 +48,7 @@ mount /dev/disk/by-label/boot /mnt/boot
 
 # Get config (if you've pushed to GitHub)
 nix-shell -p git
-git clone YOUR_REPO_URL /mnt/etc/nixos-config
+git clone YOUR_REPO_URL /mnt/etc/nixos-config     https://github.com/pr0tonion/nixos-config
 cd /mnt/etc/nixos-config
 
 # Generate hardware config

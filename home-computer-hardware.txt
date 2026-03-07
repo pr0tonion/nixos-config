@@ -1,0 +1,5 @@
+Processor: AMD Ryzen 5 7600X 4.70Ghz
+Graphics card: AMD Radeon RX 5700 XT
+Ram: 32GB
+Motherboard: ASUS TUF GAMING B650-PLUS WIFI
+Internet: Ethernet mainly, but MB does have WIFI

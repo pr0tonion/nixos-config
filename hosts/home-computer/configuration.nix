@@ -1,20 +1,30 @@
 { config, pkgs, lib, ... }:
 
 {
-  # This is a skeleton configuration for a home computer
-  # To be expanded when needed
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
-  # Bootloader configuration
+  # Bootloader
   boot.loader = {
     systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;
   };
+
+  # Load WiFi driver for ASUS TUF B650-PLUS WIFI (MediaTek MT7922)
+  boot.kernelModules = [ "mt7921e" ];
+
+  # Pull MediaTek MT7922 firmware from linux-firmware
+  hardware.enableRedistributableFirmware = true;
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Hostname
   networking.hostName = "home-computer";
+
+  # Use NetworkManager for WiFi and general networking
+  networking.networkmanager.enable = true;
 
   # Timezone and locale
   time.timeZone = "Europe/Oslo";
@@ -30,33 +40,48 @@
 
   # Norwegian keyboard layout
   console.keyMap = "no";
-
-  # X11 keyboard layout (for GUI)
   services.xserver.xkb = {
     layout = "no";
     variant = "";
   };
 
-  # System state version
-  system.stateVersion = "24.05";
+  # admin user
+  users.users.admin = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" ];
+    openssh.authorizedKeys.keys = [
+      # Add your SSH public key here
+    ];
+  };
 
-  # Allow unfree packages
+  security.sudo.wheelNeedsPassword = true;
+
+  # SSH: key-only, no root login
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
+  # Firewall
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 22 ];
+  };
+
+  # Allow unfree packages (Chrome, Discord, Steam, etc.)
   nixpkgs.config.allowUnfree = true;
 
-  # Enable periodic garbage collection
+  # Garbage collection
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
 
-  # Basic packages
-  environment.systemPackages = with pkgs; [
-    git
-    vim
-    wget
-    curl
-  ];
+  nix.settings.auto-optimise-store = true;
 
-  # TODO: Add desktop environment, user configurations, etc.
+  system.stateVersion = "25.05";
 }
