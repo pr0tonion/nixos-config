@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-unstable, lib, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -27,6 +27,9 @@
     gimp
     spotify
     thunderbird
+
+    # AI tooling — pulled from unstable for the latest version
+    pkgs-unstable.claude-code
   ];
 
   # Steam (Proton is downloaded through Steam itself, no separate package needed)
