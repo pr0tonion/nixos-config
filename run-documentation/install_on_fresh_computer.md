@@ -10,8 +10,34 @@ Boot from a NixOS live ISO, then follow these steps.
 lsblk -o NAME,SIZE,MODEL
 ```
 
-Find the **2TB NVMe** (NixOS). Note the device name, e.g. `nvme0n1`.
-**Do NOT touch the 1TB drive (Windows).**
+Find the **2TB NVMe** (NixOS, ~1.8T) and the **1TB NVMe** (~931G).
+Note the device names, e.g. `nvme0n1` and `nvme1n1`.
+
+---
+
+## 1b. (Optional) Wipe the 1TB drive
+
+Skip this if you want to keep the existing Windows install as a fallback.
+Only run this once you've **triple-checked** which device is the 1TB —
+running `wipefs` on the wrong drive destroys your install target.
+
+```bash
+# Confirm 1TB device
+lsblk -o NAME,SIZE,MODEL
+
+# Wipe partition table and filesystem signatures
+sudo wipefs -a /dev/nvme1n1   # ← replace with the actual 1TB device
+
+# Optional: also zero the first 100 MB to kill any stale boot sectors
+sudo dd if=/dev/zero of=/dev/nvme1n1 bs=1M count=100
+```
+
+The drive is now blank. NixOS won't touch it (it's not in
+`hardware-configuration.nix`). To install Windows on it later, boot a
+Windows install USB — the installer will partition it itself. Note that
+Windows installers sometimes overwrite the systemd-boot entry on the
+shared EFI partition; recover from a NixOS live ISO with `bootctl install`
+if that happens.
 
 ---
 
