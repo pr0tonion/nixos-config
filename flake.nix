@@ -68,7 +68,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin.nix;
+            home-manager.users.admin = import ./home/admin-server.nix;
           }
         ];
       };
@@ -80,8 +80,11 @@
         modules = [
           ./hosts/home-computer/configuration.nix
           ./modules/base.nix
+          ./modules/desktop/users.nix
           ./modules/desktop/gpu.nix
           ./modules/desktop/audio.nix
+          ./modules/desktop/bluetooth.nix
+          ./modules/desktop/fonts.nix
           ./modules/desktop/plasma.nix
           ./modules/desktop/applications.nix
 
@@ -90,7 +93,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin.nix;
+            home-manager.users.admin = import ./home/admin-desktop.nix;
           }
         ];
       };
@@ -127,7 +130,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin.nix;
+            home-manager.users.admin = import ./home/admin-server.nix;
           }
         ];
       };

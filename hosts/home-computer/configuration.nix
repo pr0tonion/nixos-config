@@ -11,6 +11,10 @@
     efi.canTouchEfiVariables = true;
   };
 
+  # Hibernation support (swap partition labeled "swap")
+  boot.kernelParams = [ "resume=/dev/disk/by-label/swap" ];
+  boot.resumeDevice = "/dev/disk/by-label/swap";
+
   # Load WiFi driver for ASUS TUF B650-PLUS WIFI (MediaTek MT7922)
   boot.kernelModules = [ "mt7921e" ];
 
@@ -25,6 +29,18 @@
 
   # Use NetworkManager for WiFi and general networking
   networking.networkmanager.enable = true;
+
+  # Local hostname / service discovery (.local resolution)
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+    publish = {
+      enable = true;
+      addresses = true;
+      workstation = true;
+    };
+  };
 
   # Timezone and locale
   time.timeZone = "Europe/Oslo";
@@ -44,17 +60,6 @@
     layout = "no";
     variant = "";
   };
-
-  # admin user
-  users.users.admin = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "input" ];
-    openssh.authorizedKeys.keys = [
-      # Add your SSH public key here
-    ];
-  };
-
-  security.sudo.wheelNeedsPassword = true;
 
   # SSH: key-only, no root login
   services.openssh = {

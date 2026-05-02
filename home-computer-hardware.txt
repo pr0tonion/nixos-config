@@ -3,3 +3,6 @@ Graphics card: AMD Radeon RX 5700 XT
 Ram: 32GB
 Motherboard: ASUS TUF GAMING B650-PLUS WIFI
 Internet: Ethernet mainly, but MB does have WIFI
+Storage:
+- 1 TB NVME (leave untouched for windows)
+- 2 TB NVME (Main storage for nixos)

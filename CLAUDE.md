@@ -40,15 +40,19 @@ sudo nix-collect-garbage --delete-older-than 30d
 Host-specific settings only: hostname, timezone/locale (`Europe/Oslo`, Norwegian keyboard), bootloader, SSH, firewall base rules. Hardware config lives alongside it in `hardware-configuration.nix`.
 
 ### Modules (`modules/`)
-Shared across hosts. Each module is self-contained and opens its own firewall ports.
-- `base.nix` — system packages, smartd, journald limits, fstrim
-- `networking.nix` — firewall, WoL, Avahi/mDNS
-- `users.nix` — `admin` (wheel), `media` (gid 1500), `vpn`, `monitoring` system users; `/srv/media` directory tree via `systemd.tmpfiles`
+Each module is self-contained and opens its own firewall ports.
+- `base.nix` — system packages, smartd, journald limits, fstrim (all hosts)
+- `networking.nix` — firewall, WoL, Avahi/mDNS (server only — uses systemd-networkd, conflicts with NetworkManager)
+- `users.nix` — server `admin` + `media`/`vpn`/`monitoring` system users; `/srv/media` tree via `systemd.tmpfiles`
 - `services/` — one file per service (plex, media-automation, torrent, vpn, dashboard, monitoring)
 - `maintenance/cleanup.nix` — scheduled nix GC and media cleanup timers
+- `desktop/` — home-computer-only modules: `users.nix` (desktop admin), `gpu.nix`, `audio.nix`, `bluetooth.nix`, `fonts.nix`, `plasma.nix`, `applications.nix`
 
-### Home Manager (`home/admin.nix`)
-Manages the `admin` user environment: bash aliases (`nrs`, `nrt`, `nrb`, `nfu`), starship prompt, neovim (config cloned from GitHub on first activation), git, ssh.
+### Home Manager
+Two profiles, one per use case:
+- `home/admin-server.nix` — server admin (`nrs` aliases target `home-server`)
+- `home/admin-desktop.nix` — desktop admin (`nrs` aliases target `home-computer`, plus direnv, dev CLI tools, Nix LSP)
+Both share starship, neovim (config cloned from GitHub on first activation), and git identity.
 
 ### Flake inputs
 - `nixpkgs` → `nixos-25.05`
@@ -57,11 +61,11 @@ Manages the `admin` user environment: bash aliases (`nrs`, `nrt`, `nrb`, `nfu`),
 
 ## home-computer Host
 
-Currently a skeleton (`hosts/home-computer/configuration.nix`). It only pulls in `base.nix`, `networking.nix`, and `users.nix` — no service modules. This is the host to expand. It has no `hardware-configuration.nix` yet; one must be generated on the target machine with:
-```bash
-sudo nixos-generate-config --show-hardware-config > hosts/home-computer/hardware-configuration.nix
-```
-Then add it to the `modules` list in `flake.nix` under `home-computer`.
+Desktop running KDE Plasma 6 on Wayland. AMD Ryzen 5 7600X + RX 5700 XT, 32GB RAM, ASUS TUF B650-PLUS WIFI. Steam (with gamescope session + Proton via Steam itself), gamemode, ADB for Android Studio, Bluetooth, Avahi for `.local` resolution.
+
+Admin user `initialPassword = "admin"` — must be changed with `passwd` immediately after first login. SSH password auth is disabled; add a key to `modules/desktop/users.nix` once generated on the desktop.
+
+`hardware-configuration.nix` is a stub (`{...}: {}`) — the real one is generated on the target machine during install (see `run-documentation/install_on_fresh_computer.md`).
 
 ## Adding a New Module
 
@@ -82,4 +86,8 @@ Then add it to the `modules` list in `flake.nix` under `home-computer`.
 
 ## SSH Key Setup
 
-Add your public key in `modules/users.nix` under `users.users.admin.openssh.authorizedKeys.keys`. Password auth is disabled; SSH key is required to log in.
+Add your public key under `users.users.admin.openssh.authorizedKeys.keys` in:
+- `modules/users.nix` — for home-server / vm-test
+- `modules/desktop/users.nix` — for home-computer
+
+Password auth is disabled on every host. The desktop admin has `initialPassword = "admin"` for first console login only — change it with `passwd` and add an SSH key.
