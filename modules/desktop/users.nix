@@ -14,6 +14,7 @@
       "audio"
       "input"
       "adbusers"
+      "docker"
     ];
     # Set on first boot. Change immediately with `passwd` after logging in.
     initialPassword = "admin";

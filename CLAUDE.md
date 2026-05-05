@@ -58,10 +58,19 @@ Both share starship, neovim (config cloned from GitHub on first activation), and
 - `nixpkgs` → `nixos-25.05`
 - `nixpkgs-unstable` → available as `pkgs-unstable` in all modules via `specialArgs`
 - `home-manager` → `release-25.05`, follows main nixpkgs
+- `plasma-manager` → wired in as `home-manager.sharedModules` for `home-computer` only; used in `home/admin-desktop.nix` via `programs.plasma.*`
 
 ## home-computer Host
 
-Desktop running KDE Plasma 6 on Wayland. AMD Ryzen 5 7600X + RX 5700 XT, 32GB RAM, ASUS TUF B650-PLUS WIFI. Steam (with gamescope session + Proton via Steam itself), gamemode, ADB for Android Studio, Bluetooth, Avahi for `.local` resolution.
+Desktop running KDE Plasma 6 on Wayland. AMD Ryzen 5 7600X + RX 5700 XT, 32GB RAM, ASUS TUF B650-PLUS WIFI. Steam (with gamescope session + Proton via Steam itself), gamemode, ADB for Android Studio, Bluetooth, Avahi for `.local` resolution. Docker daemon enabled (`virtualisation.docker.enable`); admin is in the `docker` group.
+
+### KDE/Plasma quirks
+
+**KDE shortcuts:** `programs.plasma.shortcuts` does not reliably write to `kglobalshortcutsrc`. Use `kwriteconfig6` inside a `home.activation` script instead — see the `kdeShortcuts` activation block in `home/admin-desktop.nix` for the established pattern. Shortcuts written this way only take effect after logout/login (kglobalaccel doesn't hot-reload).
+
+**Virtual desktops:** Setting only `Number=4` in `kwinrc` is not enough — KWin also requires `Id_1`…`Id_N` UUID entries or it resets to 1 desktop on startup. Declare all four via `programs.plasma.configFile."kwinrc"."Desktops"."Id_N"`. To create desktops at runtime without a logout, use the Plasma 6 DBus path: `qdbus org.kde.KWin /VirtualDesktopManager org.kde.KWin.VirtualDesktopManager.createDesktop <position> <name>`.
+
+**Adding a user to a new group** (e.g. `docker`, `adbusers`) requires the user to log out and back in after the rebuild for group membership to take effect.
 
 Admin user `initialPassword = "admin"` — must be changed with `passwd` immediately after first login. SSH password auth is disabled; add a key to `modules/desktop/users.nix` once generated on the desktop.
 

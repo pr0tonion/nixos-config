@@ -77,14 +77,12 @@
 
   # Fetch Neovim config from GitHub
   home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    if [ ! -d "$HOME/.config/nvim" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/pr0tonion/My-Config.git "$HOME/.config/neovim-temp"
+    if [ ! -d "$HOME/code/dotfiles" ]; then
+      $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/pr0tonion/dotfiles.git "$HOME/code/dotfiles"
+    fi
+    if [ ! -e "$HOME/.config/nvim" ]; then
       $DRY_RUN_CMD mkdir -p "$HOME/.config"
-      $DRY_RUN_CMD mv "$HOME/.config/neovim-temp/nvim" "$HOME/.config/nvim"
-      $DRY_RUN_CMD rm -rf "$HOME/.config/neovim-temp"
-      echo "Neovim config cloned from GitHub"
-    else
-      echo "Neovim config already exists, skipping clone"
+      $DRY_RUN_CMD ln -s "$HOME/code/dotfiles/nvim" "$HOME/.config/nvim"
     fi
   '';
 
