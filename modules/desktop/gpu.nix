@@ -10,18 +10,17 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true; # Required for Steam 32-bit games
-    extraPackages = with pkgs; [
-      amdvlk # Additional Vulkan ICD alongside Mesa RADV
-    ];
   };
 
   # AMD Ryzen microcode updates
   hardware.cpu.amd.updateMicrocode = true;
 
-  # Prefer Mesa RADV over amdvlk for gaming (better compatibility and performance)
-  # Force VA-API and VDPAU to the discrete GPU
+  # Hide the Raphael iGPU (1002:164e) from Vulkan so games can't pick it.
+  # UE5 titles (Dragonwilds, Far Far West) were binding to the iGPU's 512 MB
+  # VRAM instead of the RX 5700 XT, causing unplayable lag. The trailing "!"
+  # makes RADV expose only the matched device.
   environment.sessionVariables = {
-    AMD_VULKAN_ICD = "RADV";
+    MESA_VK_DEVICE_SELECT = "1002:731f!";
     LIBVA_DRIVER_NAME = "radeonsi";
     VDPAU_DRIVER = "radeonsi";
   };

@@ -100,7 +100,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.sharedModules = [ inputs.plasma-manager.homeManagerModules.plasma-manager ];
+            home-manager.sharedModules = [ inputs.plasma-manager.homeModules.plasma-manager ];
             home-manager.users.admin = import ./home/admin-desktop.nix;
           }
         ];

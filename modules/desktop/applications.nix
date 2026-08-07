@@ -11,7 +11,16 @@
     ghostty
     android-studio
     python313
-    nodejs
+    uv                # Python package/venv/version manager (replaces pip + venv + pyenv)
+    nodejs_22         # Expo SDK 54 requires Node >= 20.19.4 / 22.12 — pin to 22
+    yarn
+    # eas-cli: install per-project (`yarn add -D eas-cli`) — nixpkgs ships an
+    # unbuilt copy (no build/, no oclif.manifest.json) so only `help` works.
+    watchman          # Metro file-watcher; without it bundling/hot-reload is slow
+    jdk17             # React Native 0.81 / AGP 8.x mandates JDK 17 for Gradle
+    gcc               # node-gyp needs a C/C++ compiler for native modules
+    gnumake           # ditto (react-native-nitro-modules builds native code)
+    pkg-config        # ditto
     vscode-fhs
 
     # Plasma tiling window manager (enable in System Settings -> KWin Scripts)
@@ -42,6 +51,12 @@
 
     # Docker CLI and Compose plugin
     docker-compose
+
+    # AWS CLI
+    awscli2
+
+    # SQL TUI client
+    lazysql
   ];
 
   # Steam (Proton is downloaded through Steam itself, no separate package needed)
@@ -87,6 +102,26 @@
       openssl
       icu
       libgcc
+      # Android SDK prebuilt binaries (aapt2, sdkmanager, emulator) are linked
+      # against generic glibc paths and these shared libs:
+      ncurses5           # libtinfo.so.5 for older aapt
+      bzip2              # sdkmanager extracts SDK packages
+      libxcrypt-legacy   # libcrypt.so.1 for sdkmanager (split out of glibc)
+      libGL              # emulator + layout previews
     ];
   };
+
+  # React Native / Android dev environment.
+  # ANDROID_HOME: read by Gradle and Expo CLI to locate the SDK.
+  # ANDROID_SDK_ROOT: legacy variable, still read by sdkmanager and some Gradle plugins.
+  # JAVA_HOME: Gradle daemon picks this up; without it Gradle may use the wrong JDK major version.
+  # PATH additions expose adb/emulator/sdkmanager/avdmanager to the shell.
+  environment.sessionVariables = {
+    ANDROID_HOME = "$HOME/Android/Sdk";
+    ANDROID_SDK_ROOT = "$HOME/Android/Sdk";
+    JAVA_HOME = "${pkgs.jdk17.home}";
+  };
+  environment.extraInit = ''
+    export PATH="$PATH:$HOME/Android/Sdk/platform-tools:$HOME/Android/Sdk/cmdline-tools/latest/bin:$HOME/Android/Sdk/emulator"
+  '';
 }
