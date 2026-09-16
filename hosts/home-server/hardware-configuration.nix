@@ -31,7 +31,6 @@
   };
 
   # Enable hardware video acceleration
-  hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
 
   # Filesystem configuration (template - will be replaced during installation)
