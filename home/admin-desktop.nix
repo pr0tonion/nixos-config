@@ -138,6 +138,8 @@
     VISUAL = "nvim";
   };
 
+  programs.plasma.enable = true;
+
   programs.plasma.configFile."kaccessrc"."ScreenReader"."Enabled".value = false;
 
   programs.plasma.configFile."kwinrc"."Desktops"."Number".value = 4;
@@ -146,6 +148,7 @@
   programs.plasma.configFile."kwinrc"."Desktops"."Id_3".value = "56e530b9-722a-4f99-8d94-352c737b142a";
   programs.plasma.configFile."kwinrc"."Desktops"."Id_4".value = "09a65991-e104-41fb-a2e1-b445b87876b9";
   programs.plasma.configFile."kcminputrc"."Keyboard"."NumLock".value = 0;
+  programs.plasma.configFile."plasmaparc"."General"."AudioFeedback".value = false;
 
   # programs.plasma.shortcuts doesn't reliably write to kglobalshortcutsrc,
   # so we use kwriteconfig6 directly in an activation script.
