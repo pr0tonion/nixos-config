@@ -31,14 +31,6 @@
       inherit system;
       config.allowUnfree = true;
     };
-
-    # Common arguments for all hosts
-    commonArgs = {
-      inherit system;
-      specialArgs = {
-        inherit inputs pkgs-unstable;
-      };
-    };
   in
   {
     # NixOS Configurations

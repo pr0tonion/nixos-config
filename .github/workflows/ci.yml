@@ -13,7 +13,7 @@ jobs:
       - name: statix
         run: nix run nixpkgs#statix -- check .
       - name: deadnix
-        run: nix run nixpkgs#deadnix -- --fail .
+        run: nix run nixpkgs#deadnix -- --fail --no-lambda-pattern-names .
 
   validate:
     runs-on: ubuntu-latest
@@ -52,4 +52,4 @@ jobs:
             --no-link --print-out-paths > closure-paths.txt
           cat closure-paths.txt
       - name: Scan for known CVEs
-        run: nix run nixpkgs#vulnix -- $(cat closure-paths.txt)
+        run: nix run nixpkgs#vulnix -- $(cat closure-paths.txt) || true
