@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: statix
+        run: nix run nixpkgs#statix -- check .
+      - name: deadnix
+        run: nix run nixpkgs#deadnix -- --fail .
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: nix flake check
+        run: nix flake check
+
+  virus-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ClamAV
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clamav clamav-freshclam
+      - name: Update virus definitions
+        run: sudo freshclam
+      - name: Scan repository
+        run: clamscan -r --infected --exclude-dir='^\./\.git' .
+
+  vulnix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Build host closures
+        run: |
+          nix build \
+            .#nixosConfigurations.home-server.config.system.build.toplevel \
+            .#nixosConfigurations.home-computer.config.system.build.toplevel \
+            .#nixosConfigurations.vm-test.config.system.build.toplevel \
+            --no-link --print-out-paths > closure-paths.txt
+          cat closure-paths.txt
+      - name: Scan for known CVEs
+        run: nix run nixpkgs#vulnix -- $(cat closure-paths.txt)
