@@ -23,36 +23,12 @@
     openFirewall = true; # Opens port 9696
   };
 
-  # Overseerr/Jellyseerr - Media request management
-  # Note: Overseerr is not in nixpkgs by default, using Jellyseerr as alternative
-  # or we can package Overseerr manually
-  services.jellyseerr = {
+  # Seerr - Media request management (Overseerr and Jellyseerr merged into Seerr;
+  # services.jellyseerr was renamed to services.seerr in 26.05)
+  services.seerr = {
     enable = true;
     openFirewall = true; # Opens port 5055
   };
-
-  # Additional firewall rules
-  networking.firewall.allowedTCPPorts = [
-    8989   # Sonarr
-    7878   # Radarr
-    9696   # Prowlarr
-    5055   # Jellyseerr (Overseerr alternative)
-  ];
-
-  # Configure service directories and permissions
-  systemd.tmpfiles.rules = [
-    # Sonarr
-    "d /var/lib/sonarr 0755 media media -"
-
-    # Radarr
-    "d /var/lib/radarr 0755 media media -"
-
-    # Prowlarr
-    "d /var/lib/prowlarr 0755 media media -"
-
-    # Jellyseerr
-    "d /var/lib/jellyseerr 0755 media media -"
-  ];
 
   # Service configurations
   systemd.services.sonarr = {
@@ -86,7 +62,7 @@
     };
   };
 
-  systemd.services.jellyseerr = {
+  systemd.services.seerr = {
     serviceConfig = {
       # Resource limits
       MemoryMax = "512M";
@@ -97,12 +73,12 @@
   # 1. Sonarr: http://<server-ip>:8989
   # 2. Radarr: http://<server-ip>:7878
   # 3. Prowlarr: http://<server-ip>:9696
-  # 4. Jellyseerr: http://<server-ip>:5055
+  # 4. Seerr: http://<server-ip>:5055
   #
   # Setup order:
   # 1. Configure Prowlarr with your indexers/trackers
   # 2. Connect Sonarr and Radarr to Prowlarr
   # 3. Configure download client (Transmission) in Sonarr/Radarr
   # 4. Set up media libraries pointing to /srv/media/tv and /srv/media/movies
-  # 5. Configure Jellyseerr to connect to Plex and Sonarr/Radarr
+  # 5. Configure Seerr to connect to Plex and Sonarr/Radarr
 }

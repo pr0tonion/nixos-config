@@ -60,6 +60,9 @@ Both share starship, neovim (config cloned from GitHub on first activation), and
 - `home-manager` → `release-26.05`, follows main nixpkgs
 - `plasma-manager` → wired in as `home-manager.sharedModules` for `home-computer` only; used in `home/admin-desktop.nix` via `programs.plasma.*`
 
+### Update flow
+`.github/workflows/update-flake-lock.yml` opens a `flake.lock` bump PR every Monday. Once merged to `main`, `home-server` applies it via `system.autoUpgrade` (nightly, from `github:pr0tonion/nixos-config#home-server`, no automatic reboot). `home-computer` is still updated manually with `nrs`.
+
 ## home-computer Host
 
 Desktop running KDE Plasma 6 on Wayland. AMD Ryzen 5 7600X + RX 5700 XT, 32GB RAM, ASUS TUF B650-PLUS WIFI. Steam (with gamescope session + Proton via Steam itself), gamemode, ADB for Android Studio, Bluetooth, Avahi for `.local` resolution. Docker daemon enabled (`virtualisation.docker.enable`); admin is in the `docker` group.

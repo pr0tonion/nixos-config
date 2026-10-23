@@ -105,6 +105,9 @@
       modules = [
         "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         {
+          # Adopt the 26.11 default early (the minimal ISO ships ZFS support)
+          boot.zfs.forceImportRoot = false;
+
           # Add git and other tools to the installer
           environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
             git

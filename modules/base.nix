@@ -47,11 +47,4 @@
 
   # Enable periodic TRIM for SSDs
   services.fstrim.enable = true;
-
-  # Automatic updates for security patches (optional - can be disabled if preferred)
-  system.autoUpgrade = {
-    enable = false; # Set to true if you want automatic updates
-    allowReboot = false;
-    dates = "weekly";
-  };
 }

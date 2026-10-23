@@ -42,9 +42,9 @@
 
   programs.git = {
     enable = true;
-    userName = "Marcus Pedersen";
-    userEmail = "marcus.pedersen95@gmail.com";
-    extraConfig = {
+    settings = {
+      user.name = "Marcus Pedersen";
+      user.email = "marcus.pedersen95@gmail.com";
       init.defaultBranch = "main";
       pull.rebase = false;
     };
@@ -52,6 +52,9 @@
 
   programs.neovim = {
     enable = true;
+    # The nvim config is pure Lua; skip the legacy Ruby/Python remote-plugin hosts
+    withRuby = false;
+    withPython3 = false;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
@@ -77,9 +80,13 @@
 
   programs.ssh = {
     enable = true;
-    forwardAgent = false;
-    serverAliveInterval = 60;
-    serverAliveCountMax = 3;
+    # Home Manager's implicit defaults are deprecated; declare what we want explicitly
+    enableDefaultConfig = false;
+    settings."*" = {
+      ForwardAgent = "no";
+      ServerAliveInterval = 60;
+      ServerAliveCountMax = 3;
+    };
   };
 
   programs.starship = {

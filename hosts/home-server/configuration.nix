@@ -42,8 +42,24 @@
   # System state version (don't change after installation)
   system.stateVersion = "24.05";
 
+  # Plex and the *arr apps watch large libraries with inotify. Kept here, not in
+  # hardware-configuration.nix, so it survives regenerating that file.
+  boot.kernel.sysctl."fs.inotify.max_user_watches" = 524288;
+
   # Allow unfree packages (needed for Plex, etc.)
   nixpkgs.config.allowUnfree = true;
+
+  # Pull and switch to main nightly. flake.lock on main is bumped weekly by the
+  # update-flake-lock workflow (.github/workflows/update-flake-lock.yml), so this
+  # tracks the latest nixos-26.05 security fixes without touching inputs itself.
+  # No automatic reboots: kernel updates take effect on the next manual reboot.
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:pr0tonion/nixos-config#home-server";
+    dates = "04:00";
+    randomizedDelaySec = "45min";
+    allowReboot = false;
+  };
 
   # Enable periodic garbage collection
   nix.gc = {
