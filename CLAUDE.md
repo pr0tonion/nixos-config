@@ -21,6 +21,9 @@ sudo nixos-rebuild test --flake .#home-computer
 # Validate syntax without building
 nix flake check
 
+# Format all .nix files (CI fails on unformatted files)
+nix fmt
+
 # Update all flake inputs
 nix flake update
 
@@ -61,7 +64,7 @@ Both share starship, neovim (config cloned from GitHub on first activation), and
 - `plasma-manager` → wired in as `home-manager.sharedModules` for `home-computer` only; used in `home/admin-desktop.nix` via `programs.plasma.*`
 
 ### Update flow
-`.github/workflows/update-flake-lock.yml` opens a `flake.lock` bump PR every Monday. Once merged to `main`, `home-server` applies it via `system.autoUpgrade` (nightly, from `github:pr0tonion/nixos-config#home-server`, no automatic reboot). `home-computer` is still updated manually with `nrs`.
+`.github/workflows/update-flake-lock.yml` opens a `flake.lock` bump PR every Monday, dispatches CI on it, and enables auto-merge; branch protection on `main` holds the merge until the required checks (`lint`, `format`, `validate`, `secrets`, `build`) pass. CI's `build` job posts an `nvd` package diff on every PR. Once merged to `main`, `home-server` applies it via `system.autoUpgrade` (nightly, from `github:pr0tonion/nixos-config#home-server`, no automatic reboot). `home-computer` is still updated manually with `nrs`.
 
 ## home-computer Host
 
