@@ -179,8 +179,7 @@ The configuration includes:
 
 1. **Direct Installation**: Boot from USB, install to server
 2. **Remote Deployment**: SSH-based deployment from another machine
-3. **VM Testing**: Test in QEMU before deploying
-4. **Container Testing**: Test services in NixOS containers
+3. **Container Testing**: Test services in NixOS containers
 
 ## Maintenance
 

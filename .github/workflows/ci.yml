@@ -48,7 +48,6 @@ jobs:
           nix build \
             .#nixosConfigurations.home-server.config.system.build.toplevel \
             .#nixosConfigurations.home-computer.config.system.build.toplevel \
-            .#nixosConfigurations.vm-test.config.system.build.toplevel \
             --no-link --print-out-paths > closure-paths.txt
           cat closure-paths.txt
       - name: Scan for known CVEs

@@ -97,43 +97,6 @@
           }
         ];
       };
-
-      # VM Test Configuration (for testing before deploying to hardware)
-      vm-test = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs pkgs-unstable; };
-        modules = [
-          # Hardware configuration
-          ./hosts/vm-test/hardware-configuration.nix
-
-          # VM-specific configuration
-          ./hosts/vm-test/configuration.nix
-
-          # Common modules
-          ./modules/base.nix
-          ./modules/networking.nix
-          ./modules/users.nix
-
-          # Service modules (same as home-server)
-          ./modules/services/plex.nix
-          ./modules/services/media-automation.nix
-          ./modules/services/torrent.nix
-          ./modules/services/monitoring.nix
-          ./modules/services/vpn.nix
-          ./modules/services/dashboard.nix
-
-          # Maintenance modules
-          ./modules/maintenance/cleanup.nix
-
-          # Home Manager integration
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin-server.nix;
-          }
-        ];
-      };
     };
 
     # ISO image for installation

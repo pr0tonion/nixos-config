@@ -26,7 +26,7 @@ Aliases on **home-computer** (defined in `home/admin-desktop.nix`):
 | `nrb` | `sudo nixos-rebuild boot --flake .#home-computer` |
 | `nfu` | `nix flake update` |
 
-Aliases on **home-server / vm-test** (defined in `home/admin-server.nix`)
+Aliases on **home-server** (defined in `home/admin-server.nix`)
 target `.#home-server` instead.
 
 ---
@@ -123,6 +123,6 @@ nix flake check
 
 Keys live under `users.users.admin.openssh.authorizedKeys.keys` in:
 - `modules/desktop/users.nix` — for home-computer
-- `modules/users.nix` — for home-server / vm-test
+- `modules/users.nix` — for home-server
 
 Password auth is disabled on all hosts.

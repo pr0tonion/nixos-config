@@ -5,11 +5,9 @@ This is a condensed guide to get you up and running quickly. For detailed inform
 ## Prerequisites
 
 - A server with Intel i7-10700 (or similar) **OR a Virtual Machine for testing**
-- USB drive for installation (8GB+) - not needed for VM
+- USB drive for installation (8GB+)
 - Ethernet connection
 - Basic Linux command line knowledge
-
-> **Don't have physical hardware yet?** See [documentation/08-vm-testing.md](documentation/08-vm-testing.md) for VM testing instructions!
 
 ## Installation Steps
 

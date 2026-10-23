@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-A NixOS flake-based configuration managing multiple hosts: `home-server` (media server), `home-computer` (desktop, actively being developed), and `vm-test` (mirrors home-server for testing). Pinned to `nixos-26.05` with `nixpkgs-unstable` available as `pkgs-unstable` for newer packages.
+A NixOS flake-based configuration managing multiple hosts: `home-server` (media server), and `home-computer` (desktop, actively being developed). Pinned to `nixos-26.05` with `nixpkgs-unstable` available as `pkgs-unstable` for newer packages.
 
 ## Key Commands
 
@@ -96,7 +96,7 @@ Admin user `initialPassword = "admin"` — must be changed with `passwd` immedia
 ## SSH Key Setup
 
 Add your public key under `users.users.admin.openssh.authorizedKeys.keys` in:
-- `modules/users.nix` — for home-server / vm-test
+- `modules/users.nix` — for home-server
 - `modules/desktop/users.nix` — for home-computer
 
 Password auth is disabled on every host. The desktop admin has `initialPassword = "admin"` for first console login only — change it with `passwd` and add an SSH key.

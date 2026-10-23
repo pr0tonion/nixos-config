@@ -99,17 +99,7 @@ Detailed documentation is available in the `documentation/` directory:
 
 ## Testing Before Deployment
 
-**Don't have your physical server yet?** No problem!
-
-You can test this entire configuration in a virtual machine before deploying to hardware. See [documentation/08-vm-testing.md](documentation/08-vm-testing.md) for a complete VM testing guide.
-
-**Key points:**
-- Works great in UTM, VirtualBox, or VMware Fusion on macOS
-- All services function (except GPU transcoding and Wake-on-LAN)
-- Perfect for learning NixOS and testing your configuration
-- Use `#vm-test` configuration instead of `#home-server`
-
-For other testing methods (containers, etc.), see [documentation/06-deployment.md](documentation/06-deployment.md).
+For testing methods (containers, etc.), see [documentation/06-deployment.md](documentation/06-deployment.md).
 
 ## Updating
 
