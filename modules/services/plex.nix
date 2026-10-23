@@ -17,7 +17,7 @@
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      intel-media-driver    # VAAPI (iHD) for Broadwell and newer
+      intel-media-driver # VAAPI (iHD) for Broadwell and newer
       intel-compute-runtime # OpenCL, used by Plex HDR tone mapping
     ];
   };
@@ -25,7 +25,10 @@
   # Ensure Plex has access to media directories
   systemd.services.plex.serviceConfig = {
     # Allow access to hardware acceleration
-    SupplementaryGroups = [ "video" "render" ];
+    SupplementaryGroups = [
+      "video"
+      "render"
+    ];
 
     # Bind media directories
     BindPaths = [

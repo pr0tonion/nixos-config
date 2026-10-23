@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Home Manager config for the admin user on home-computer (desktop).
@@ -11,7 +16,10 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    historyControl = [ "ignoredups" "ignorespace" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+    ];
     historySize = 10000;
 
     shellAliases = {
@@ -60,7 +68,7 @@
     vimAlias = true;
   };
 
-  home.activation.linkNixosConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.linkNixosConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p "$HOME/code"
     if [ ! -e "$HOME/code/nixos-config" ]; then
       $DRY_RUN_CMD ln -s /etc/nixos-config "$HOME/code/nixos-config"
@@ -68,7 +76,7 @@
   '';
 
   # Pull personal Neovim config on first activation.
-  home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -d "$HOME/code/dotfiles" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/pr0tonion/dotfiles.git "$HOME/code/dotfiles"
     fi
@@ -153,16 +161,20 @@
   programs.plasma.configFile."kaccessrc"."ScreenReader"."Enabled".value = false;
 
   programs.plasma.configFile."kwinrc"."Desktops"."Number".value = 4;
-  programs.plasma.configFile."kwinrc"."Desktops"."Id_1".value = "f58341d4-cbac-4774-8425-d5be1a398d4b";
-  programs.plasma.configFile."kwinrc"."Desktops"."Id_2".value = "3723bcd7-b8c5-494a-9c85-4189084eb7bb";
-  programs.plasma.configFile."kwinrc"."Desktops"."Id_3".value = "56e530b9-722a-4f99-8d94-352c737b142a";
-  programs.plasma.configFile."kwinrc"."Desktops"."Id_4".value = "09a65991-e104-41fb-a2e1-b445b87876b9";
+  programs.plasma.configFile."kwinrc"."Desktops"."Id_1".value =
+    "f58341d4-cbac-4774-8425-d5be1a398d4b";
+  programs.plasma.configFile."kwinrc"."Desktops"."Id_2".value =
+    "3723bcd7-b8c5-494a-9c85-4189084eb7bb";
+  programs.plasma.configFile."kwinrc"."Desktops"."Id_3".value =
+    "56e530b9-722a-4f99-8d94-352c737b142a";
+  programs.plasma.configFile."kwinrc"."Desktops"."Id_4".value =
+    "09a65991-e104-41fb-a2e1-b445b87876b9";
   programs.plasma.configFile."kcminputrc"."Keyboard"."NumLock".value = 0;
   programs.plasma.configFile."plasmaparc"."General"."AudioFeedback".value = false;
 
   # programs.plasma.shortcuts doesn't reliably write to kglobalshortcutsrc,
   # so we use kwriteconfig6 directly in an activation script.
-  home.activation.kdeShortcuts = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.kdeShortcuts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     kwrite="${pkgs.kdePackages.kconfig}/bin/kwriteconfig6"
 
     # Lock Session: Meta+Home only (drop default Meta+L as current binding)

@@ -1,4 +1,10 @@
-{ config, pkgs, pkgs-unstable, lib, ... }:
+{
+  config,
+  pkgs,
+  pkgs-unstable,
+  lib,
+  ...
+}:
 
 {
   environment.systemPackages = with pkgs; [
@@ -10,18 +16,18 @@
     discord
     ghostty
     android-studio
-    android-tools     # adb/fastboot; replaces the removed programs.adb module
+    android-tools # adb/fastboot; replaces the removed programs.adb module
     python313
-    uv                # Python package/venv/version manager (replaces pip + venv + pyenv)
-    nodejs_22         # Expo SDK 54 requires Node >= 20.19.4 / 22.12 — pin to 22
+    uv # Python package/venv/version manager (replaces pip + venv + pyenv)
+    nodejs_22 # Expo SDK 54 requires Node >= 20.19.4 / 22.12 — pin to 22
     yarn
     # eas-cli: install per-project (`yarn add -D eas-cli`) — nixpkgs ships an
     # unbuilt copy (no build/, no oclif.manifest.json) so only `help` works.
-    watchman          # Metro file-watcher; without it bundling/hot-reload is slow
-    jdk17             # React Native 0.81 / AGP 8.x mandates JDK 17 for Gradle
-    gcc               # node-gyp needs a C/C++ compiler for native modules
-    gnumake           # ditto (react-native-nitro-modules builds native code)
-    pkg-config        # ditto
+    watchman # Metro file-watcher; without it bundling/hot-reload is slow
+    jdk17 # React Native 0.81 / AGP 8.x mandates JDK 17 for Gradle
+    gcc # node-gyp needs a C/C++ compiler for native modules
+    gnumake # ditto (react-native-nitro-modules builds native code)
+    pkg-config # ditto
     vscode-fhs
 
     # Plasma tiling window manager (enable in System Settings -> KWin Scripts)
@@ -99,17 +105,17 @@
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
-      stdenv.cc.cc.lib   # libstdc++ — required by lua-language-server and most native LSPs
+      stdenv.cc.cc.lib # libstdc++ — required by lua-language-server and most native LSPs
       zlib
       openssl
       icu
       libgcc
       # Android SDK prebuilt binaries (aapt2, sdkmanager, emulator) are linked
       # against generic glibc paths and these shared libs:
-      ncurses5           # libtinfo.so.5 for older aapt
-      bzip2              # sdkmanager extracts SDK packages
-      libxcrypt-legacy   # libcrypt.so.1 for sdkmanager (split out of glibc)
-      libGL              # emulator + layout previews
+      ncurses5 # libtinfo.so.5 for older aapt
+      bzip2 # sdkmanager extracts SDK packages
+      libxcrypt-legacy # libcrypt.so.1 for sdkmanager (split out of glibc)
+      libGL # emulator + layout previews
     ];
   };
 

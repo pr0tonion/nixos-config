@@ -8,9 +8,9 @@
     isNormalUser = true;
     description = "System Administrator";
     extraGroups = [
-      "wheel"        # sudo access
-      "video"        # GPU access for transcoding
-      "docker"       # If Docker is enabled
+      "wheel" # sudo access
+      "video" # GPU access for transcoding
+      "docker" # If Docker is enabled
     ];
     # SSH keys should be added here for secure access
     openssh.authorizedKeys.keys = [
