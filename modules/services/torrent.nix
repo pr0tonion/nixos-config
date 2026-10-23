@@ -6,6 +6,7 @@
   # Alternatively, you could use qBittorrent or Deluge
   services.transmission = {
     enable = true;
+    package = pkgs.transmission_4; # transmission_3 was removed; must be set explicitly
     user = "transmission";
     group = "transmission";
 

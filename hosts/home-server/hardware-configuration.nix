@@ -19,19 +19,13 @@
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   # Enable Intel integrated graphics
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      intel-media-driver # For VAAPI support (Broadwell and newer)
-      vaapiIntel         # For older Intel GPUs
-      vaapiVdpau
-      libvdpau-va-gl
-      intel-compute-runtime # For Intel OpenCL support
+      intel-media-driver    # VAAPI (iHD) for Broadwell and newer — covers the i7-10700's UHD 630
+      intel-compute-runtime # OpenCL, used by Plex HDR tone mapping
     ];
   };
-
-  # Enable hardware video acceleration
-  hardware.opengl.driSupport32Bit = true;
 
   # Filesystem configuration (template - will be replaced during installation)
   fileSystems."/" = {
