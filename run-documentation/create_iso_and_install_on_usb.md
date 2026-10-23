@@ -12,7 +12,7 @@ or use curl directly (check the site for the current release URL):
 
 ```bash
 curl -L -o nixos-minimal.iso \
-  "https://channels.nixos.org/nixos-25.05/latest-nixos-minimal-x86_64-linux.iso"
+  "https://channels.nixos.org/nixos-26.05/latest-nixos-minimal-x86_64-linux.iso"
 ```
 
 ---
