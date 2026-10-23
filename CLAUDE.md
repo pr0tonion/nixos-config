@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-A NixOS flake-based configuration managing multiple hosts: `home-server` (media server), `home-computer` (desktop, actively being developed), and `vm-test` (mirrors home-server for testing). Pinned to `nixos-25.05` with `nixpkgs-unstable` available as `pkgs-unstable` for newer packages.
+A NixOS flake-based configuration managing multiple hosts: `home-server` (media server), and `home-computer` (desktop, actively being developed). Pinned to `nixos-26.05` with `nixpkgs-unstable` available as `pkgs-unstable` for newer packages.
 
 ## Key Commands
 
@@ -55,10 +55,13 @@ Two profiles, one per use case:
 Both share starship, neovim (config cloned from GitHub on first activation), and git identity.
 
 ### Flake inputs
-- `nixpkgs` → `nixos-25.05`
+- `nixpkgs` → `nixos-26.05`
 - `nixpkgs-unstable` → available as `pkgs-unstable` in all modules via `specialArgs`
-- `home-manager` → `release-25.05`, follows main nixpkgs
+- `home-manager` → `release-26.05`, follows main nixpkgs
 - `plasma-manager` → wired in as `home-manager.sharedModules` for `home-computer` only; used in `home/admin-desktop.nix` via `programs.plasma.*`
+
+### Update flow
+`.github/workflows/update-flake-lock.yml` opens a `flake.lock` bump PR every Monday. Once merged to `main`, `home-server` applies it via `system.autoUpgrade` (nightly, from `github:pr0tonion/nixos-config#home-server`, no automatic reboot). `home-computer` is still updated manually with `nrs`.
 
 ## home-computer Host
 
@@ -70,7 +73,7 @@ Desktop running KDE Plasma 6 on Wayland. AMD Ryzen 5 7600X + RX 5700 XT, 32GB RA
 
 **Virtual desktops:** Setting only `Number=4` in `kwinrc` is not enough — KWin also requires `Id_1`…`Id_N` UUID entries or it resets to 1 desktop on startup. Declare all four via `programs.plasma.configFile."kwinrc"."Desktops"."Id_N"`. To create desktops at runtime without a logout, use the Plasma 6 DBus path: `qdbus org.kde.KWin /VirtualDesktopManager org.kde.KWin.VirtualDesktopManager.createDesktop <position> <name>`.
 
-**Adding a user to a new group** (e.g. `docker`, `adbusers`) requires the user to log out and back in after the rebuild for group membership to take effect.
+**Adding a user to a new group** (e.g. `docker`, `kvm`) requires the user to log out and back in after the rebuild for group membership to take effect.
 
 Admin user `initialPassword = "admin"` — must be changed with `passwd` immediately after first login. SSH password auth is disabled; add a key to `modules/desktop/users.nix` once generated on the desktop.
 
@@ -96,7 +99,7 @@ Admin user `initialPassword = "admin"` — must be changed with `passwd` immedia
 ## SSH Key Setup
 
 Add your public key under `users.users.admin.openssh.authorizedKeys.keys` in:
-- `modules/users.nix` — for home-server / vm-test
+- `modules/users.nix` — for home-server
 - `modules/desktop/users.nix` — for home-computer
 
 Password auth is disabled on every host. The desktop admin has `initialPassword = "admin"` for first console login only — change it with `passwd` and add an SSH key.

@@ -3,7 +3,7 @@
 {
   # Admin user for the home-computer (desktop) host.
   # Distinct from the home-server admin in modules/users.nix:
-  # different machine, different group set (audio/input/adbusers for desktop use).
+  # different machine, different group set (audio/input/video for desktop use).
   users.users.admin = {
     isNormalUser = true;
     description = "Marcus";
@@ -13,7 +13,6 @@
       "video"
       "audio"
       "input"
-      "adbusers"
       "docker"
       "kvm"        # Android emulator hardware virtualization via /dev/kvm
     ];

@@ -3,14 +3,14 @@
 
   inputs = {
     # Use latest stable NixOS
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
     # Use unstable for newer packages when needed
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Home Manager for user configuration
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -97,43 +97,6 @@
           }
         ];
       };
-
-      # VM Test Configuration (for testing before deploying to hardware)
-      vm-test = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs pkgs-unstable; };
-        modules = [
-          # Hardware configuration
-          ./hosts/vm-test/hardware-configuration.nix
-
-          # VM-specific configuration
-          ./hosts/vm-test/configuration.nix
-
-          # Common modules
-          ./modules/base.nix
-          ./modules/networking.nix
-          ./modules/users.nix
-
-          # Service modules (same as home-server)
-          ./modules/services/plex.nix
-          ./modules/services/media-automation.nix
-          ./modules/services/torrent.nix
-          ./modules/services/monitoring.nix
-          ./modules/services/vpn.nix
-          ./modules/services/dashboard.nix
-
-          # Maintenance modules
-          ./modules/maintenance/cleanup.nix
-
-          # Home Manager integration
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin-server.nix;
-          }
-        ];
-      };
     };
 
     # ISO image for installation
@@ -142,6 +105,9 @@
       modules = [
         "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         {
+          # Adopt the 26.11 default early (the minimal ISO ships ZFS support)
+          boot.zfs.forceImportRoot = false;
+
           # Add git and other tools to the installer
           environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
             git

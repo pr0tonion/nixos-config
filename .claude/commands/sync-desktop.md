@@ -52,6 +52,6 @@ Print a clear summary:
 
 ## Constraints
 - Only modify `modules/desktop/applications.nix`, `modules/desktop/gpu.nix`, and `hosts/home-computer/configuration.nix`
-- Do not touch home-server, vm-test, or any shared modules
+- Do not touch home-server or any shared modules
 - Do not restructure or reformat files beyond the minimal required changes
 - `nixpkgs.config.allowUnfree = true` is already set — unfree packages like Chrome, Discord, and Android Studio are fine

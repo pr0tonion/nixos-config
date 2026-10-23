@@ -18,21 +18,6 @@
   # Enable Intel microcode updates
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  # Enable Intel integrated graphics
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver # For VAAPI support (Broadwell and newer)
-      vaapiIntel         # For older Intel GPUs
-      vaapiVdpau
-      libvdpau-va-gl
-      intel-compute-runtime # For Intel OpenCL support
-    ];
-  };
-
-  # Enable hardware video acceleration
-  hardware.opengl.driSupport32Bit = true;
-
   # Filesystem configuration (template - will be replaced during installation)
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
@@ -57,13 +42,4 @@
   # Network interface for Wake-on-LAN
   # This will be auto-detected during installation
   # networking.interfaces.enp0s31f6.useDHCP = lib.mkDefault true;
-
-  # Maximum number of open files (useful for torrent clients and Plex)
-  boot.kernel.sysctl = {
-    "fs.inotify.max_user_watches" = 524288;
-    "fs.file-max" = 100000;
-  };
-
-  # Power management
-  powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
 }

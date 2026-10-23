@@ -10,6 +10,7 @@
     discord
     ghostty
     android-studio
+    android-tools     # adb/fastboot; replaces the removed programs.adb module
     python313
     uv                # Python package/venv/version manager (replaces pip + venv + pyenv)
     nodejs_22         # Expo SDK 54 requires Node >= 20.19.4 / 22.12 — pin to 22
@@ -89,8 +90,9 @@
   # Docker daemon — admin is added to the docker group in modules/desktop/users.nix
   virtualisation.docker.enable = true;
 
-  # Android Studio USB debugging (admin is added to the adbusers group in modules/desktop/users.nix)
-  programs.adb.enable = true;
+  # Android Studio USB debugging. programs.adb was removed in 26.05 — systemd 258
+  # applies the USB uaccess rules itself, so only the adb binary is needed and
+  # android-tools provides it (see environment.systemPackages above).
 
   # Allow Mason (Neovim) and other prebuilt generic-Linux binaries to run on NixOS.
   # Without this, dynamically linked executables fail with "Could not start ...".

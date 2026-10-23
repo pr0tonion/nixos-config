@@ -104,18 +104,13 @@
 
       echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting downloads cleanup..." >> "$LOG_FILE"
 
-      # Clean up incomplete downloads older than 7 days
-      if [ -d "$DOWNLOADS_DIR/incomplete" ]; then
-        find "$DOWNLOADS_DIR/incomplete" -type f -mtime +7 -delete 2>/dev/null || true
-        find "$DOWNLOADS_DIR/incomplete" -type d -empty -delete 2>/dev/null || true
-        echo "Cleaned incomplete downloads" >> "$LOG_FILE"
-      fi
+      # Incomplete/.part data is left alone: Transmission still tracks those torrents,
+      # and slow private-tracker downloads can legitimately sit idle for weeks.
+      # Remove torrents from Transmission to delete their data instead.
 
-      # Clean up .part files
-      find "$DOWNLOADS_DIR" -name "*.part" -mtime +7 -delete 2>/dev/null || true
-
-      # Clean up empty directories
-      find "$DOWNLOADS_DIR" -type d -empty -delete 2>/dev/null || true
+      # Clean up empty directories left behind after imports. -mindepth 2 keeps the
+      # complete/incomplete/watch folders themselves, which Transmission needs.
+      find "$DOWNLOADS_DIR" -mindepth 2 -type d -empty -delete 2>/dev/null || true
 
       # Clean up old torrent files from watch directory
       if [ -d "$DOWNLOADS_DIR/watch" ]; then

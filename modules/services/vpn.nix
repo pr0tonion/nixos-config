@@ -5,10 +5,9 @@
   # Tailscale is easier to set up than WireGuard and works great for home servers
   services.tailscale = {
     enable = true;
-    # Use the latest version
-    package = pkgs.tailscale;
-    # Enable IP forwarding if you want to use this as an exit node
+    # Enables IP forwarding (subnet router / exit node) and opens the UDP port
     useRoutingFeatures = "server";
+    openFirewall = true;
   };
 
   # Open Tailscale port
@@ -16,17 +15,8 @@
     # Allow Tailscale traffic
     trustedInterfaces = [ "tailscale0" ];
 
-    # Allow the Tailscale UDP port through the firewall
-    allowedUDPPorts = [ config.services.tailscale.port ];
-
     # Allow forwarding for subnet routing (optional)
     checkReversePath = "loose";
-  };
-
-  # Enable IP forwarding for subnet routing (optional)
-  boot.kernel.sysctl = {
-    "net.ipv4.ip_forward" = 1;
-    "net.ipv6.conf.all.forwarding" = 1;
   };
 
   # ALTERNATIVE: WireGuard VPN (commented out, uncomment if you prefer WireGuard)

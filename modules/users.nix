@@ -9,7 +9,6 @@
     description = "System Administrator";
     extraGroups = [
       "wheel"        # sudo access
-      "networkmanager"
       "video"        # GPU access for transcoding
       "docker"       # If Docker is enabled
     ];
@@ -88,8 +87,5 @@
     "d /srv/media/downloads/complete 0755 transmission media -"
     "d /srv/media/downloads/incomplete 0755 transmission media -"
     "d /srv/media/downloads/watch 0755 transmission media -"
-
-    # Temporary transcoding directory for Plex
-    "d /var/lib/plex/transcode 0755 media media -"
   ];
 }
