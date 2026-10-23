@@ -137,4 +137,7 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
+
+  # Claude Code's native installer (and uv) put binaries here
+  home.sessionPath = [ "$HOME/.local/bin" ];
 }
