@@ -4,52 +4,139 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Dispatched by update-flake-lock.yml: PRs opened with GITHUB_TOKEN don't trigger
+  # pull_request runs, but a dispatch on the PR branch does, and its checks count
+  # toward the PR's required status checks.
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number to post the package diff on
+        required: false
+        default: ""
+
+# Cancel superseded runs on PRs; let every push to main finish.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+permissions:
+  contents: read
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/checkout@v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
       - name: statix
         run: nix run nixpkgs#statix -- check .
       - name: deadnix
         run: nix run nixpkgs#deadnix -- --fail --no-lambda-pattern-names .
 
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
+      - name: nixfmt
+        run: nix fmt -- --ci # fails if any file isn't formatted; fix locally with `nix fmt`
+
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/checkout@v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
       - name: nix flake check
         run: nix flake check
 
-  virus-scan:
+  secrets:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install ClamAV
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clamav clamav-freshclam
-      - name: Update virus definitions
-        run: |
-          sudo systemctl stop clamav-freshclam
-          sudo freshclam
-      - name: Scan repository
-        run: clamscan -r --infected --exclude-dir='^\./\.git' .
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # scan the full history, not just the tip
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
+      - name: gitleaks
+        run: nix run nixpkgs#gitleaks -- git --redact --no-banner .
 
-  vulnix:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # sticky package-diff comment
+    env:
+      HOSTS: home-server home-computer
+      PR: ${{ github.event.pull_request.number || inputs.pr }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # needed to check out the base revision for the diff
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
+
       - name: Build host closures
         run: |
-          nix build \
-            .#nixosConfigurations.home-server.config.system.build.toplevel \
-            .#nixosConfigurations.home-computer.config.system.build.toplevel \
-            --no-link --print-out-paths > closure-paths.txt
-          cat closure-paths.txt
+          for h in $HOSTS; do
+            nix build ".#nixosConfigurations.$h.config.system.build.toplevel" -o "new-$h"
+          done
+
+      # Diff against the PR's base branch, or against the previous main commit on push.
+      - name: Package diff
+        continue-on-error: true # a broken base revision shouldn't fail this PR
+        run: |
+          case "$GITHUB_EVENT_NAME" in
+            pull_request) base="origin/$GITHUB_BASE_REF" ;;
+            push) base="HEAD^1" ;;
+            *) base="origin/main" ;;
+          esac
+          git worktree add --detach /tmp/base "$base"
+          {
+            echo "## Package changes"
+            echo
+            echo "Compared against \`$(git rev-parse --short "$base")\` ($base)."
+            for h in $HOSTS; do
+              nix build "/tmp/base#nixosConfigurations.$h.config.system.build.toplevel" -o "base-$h"
+              echo
+              echo "### $h"
+              echo '```'
+              nix run nixpkgs#nvd -- --color never diff "base-$h" "new-$h"
+              echo '```'
+            done
+          } > diff.md
+          # Stay under GitHub's 65,536-character comment limit
+          if [ "$(wc -c < diff.md)" -gt 60000 ]; then
+            head -c 60000 diff.md > diff.tmp
+            printf '\n```\n\n_Truncated; see the job summary for the full diff._\n' >> diff.tmp
+            cat diff.md >> "$GITHUB_STEP_SUMMARY"
+            mv diff.tmp diff.md
+          else
+            cat diff.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Comment package diff on PR
+        if: env.PR != '' && github.actor != 'dependabot[bot]' && hashFiles('diff.md') != ''
+        uses: marocchino/sticky-pull-request-comment@v3.0.5
+        with:
+          header: package-diff
+          number: ${{ env.PR }}
+          path: diff.md
+
+      # Informational: nixpkgs always carries some open CVEs, so this never fails the
+      # build. Findings land in the job summary.
       - name: Scan for known CVEs
-        run: nix run nixpkgs#vulnix -- $(cat closure-paths.txt) || true
+        run: |
+          paths=()
+          for h in $HOSTS; do paths+=("$(readlink -f "new-$h")"); done
+          {
+            echo "## vulnix"
+            echo "<details><summary>Known CVEs in the built closures</summary>"
+            echo
+            echo '```'
+            nix run nixpkgs#vulnix -- "${paths[@]}" 2>&1 | head -c 200000 || true
+            echo '```'
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"

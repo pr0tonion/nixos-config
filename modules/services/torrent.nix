@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Transmission BitTorrent client
@@ -78,7 +83,7 @@
 
   # Firewall configuration
   networking.firewall.allowedTCPPorts = [
-    9091   # Transmission web interface
+    9091 # Transmission web interface
     # Peer port will be opened on VPN interface
   ];
 

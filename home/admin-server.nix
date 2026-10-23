@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Home Manager configuration for admin user
@@ -13,7 +18,10 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    historyControl = [ "ignoredups" "ignorespace" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+    ];
     historySize = 10000;
 
     shellAliases = {
@@ -79,7 +87,7 @@
   };
 
   # Fetch Neovim config from GitHub
-  home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -d "$HOME/code/dotfiles" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git clone https://github.com/pr0tonion/dotfiles.git "$HOME/code/dotfiles"
     fi

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Prometheus for metrics collection
@@ -38,23 +43,29 @@
     scrapeConfigs = [
       {
         job_name = "node";
-        static_configs = [{
-          targets = [ "localhost:9100" ];
-        }];
+        static_configs = [
+          {
+            targets = [ "localhost:9100" ];
+          }
+        ];
         scrape_interval = "15s";
       }
       {
         job_name = "smartctl";
-        static_configs = [{
-          targets = [ "localhost:9633" ];
-        }];
+        static_configs = [
+          {
+            targets = [ "localhost:9633" ];
+          }
+        ];
         scrape_interval = "60s";
       }
       {
         job_name = "prometheus";
-        static_configs = [{
-          targets = [ "localhost:9090" ];
-        }];
+        static_configs = [
+          {
+            targets = [ "localhost:9090" ];
+          }
+        ];
       }
     ];
 
@@ -126,16 +137,18 @@
       };
 
       schema_config = {
-        configs = [{
-          from = "2024-01-01";
-          store = "tsdb";
-          object_store = "filesystem";
-          schema = "v13";
-          index = {
-            prefix = "index_";
-            period = "24h";
-          };
-        }];
+        configs = [
+          {
+            from = "2024-01-01";
+            store = "tsdb";
+            object_store = "filesystem";
+            schema = "v13";
+            index = {
+              prefix = "index_";
+              period = "24h";
+            };
+          }
+        ];
       };
 
       storage_config = {

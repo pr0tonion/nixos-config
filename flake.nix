@@ -22,101 +22,112 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, plasma-manager, ... }@inputs:
-  let
-    system = "x86_64-linux";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      home-manager,
+      plasma-manager,
+      ...
+    }@inputs:
+    let
+      system = "x86_64-linux";
 
-    # Create unstable package set
-    pkgs-unstable = import nixpkgs-unstable {
-      inherit system;
-      config.allowUnfree = true;
-    };
-  in
-  {
-    # NixOS Configurations
-    nixosConfigurations = {
-      # Home Server Configuration
-      home-server = nixpkgs.lib.nixosSystem {
+      # Create unstable package set
+      pkgs-unstable = import nixpkgs-unstable {
         inherit system;
-        specialArgs = { inherit inputs pkgs-unstable; };
-        modules = [
-          # Hardware configuration
-          ./hosts/home-server/hardware-configuration.nix
-
-          # Base system configuration
-          ./hosts/home-server/configuration.nix
-
-          # Common modules
-          ./modules/base.nix
-          ./modules/networking.nix
-          ./modules/users.nix
-
-          # Service modules
-          ./modules/services/plex.nix
-          ./modules/services/media-automation.nix
-          ./modules/services/torrent.nix
-          ./modules/services/monitoring.nix
-          ./modules/services/vpn.nix
-          ./modules/services/dashboard.nix
-
-          # Maintenance modules
-          ./modules/maintenance/cleanup.nix
-
-          # Home Manager integration
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.admin = import ./home/admin-server.nix;
-          }
-        ];
+        config.allowUnfree = true;
       };
+    in
+    {
+      # `nix fmt` formats every .nix file with nixfmt (RFC 166 style); CI runs it with --ci
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
 
-      # Home Computer Configuration
-      home-computer = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs pkgs-unstable; };
-        modules = [
-          ./hosts/home-computer/configuration.nix
-          ./modules/base.nix
-          ./modules/desktop/users.nix
-          ./modules/desktop/gpu.nix
-          ./modules/desktop/audio.nix
-          ./modules/desktop/bluetooth.nix
-          ./modules/desktop/fonts.nix
-          ./modules/desktop/plasma.nix
-          ./modules/desktop/applications.nix
+      # NixOS Configurations
+      nixosConfigurations = {
+        # Home Server Configuration
+        home-server = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs pkgs-unstable; };
+          modules = [
+            # Hardware configuration
+            ./hosts/home-server/hardware-configuration.nix
 
-          # Home Manager integration
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.sharedModules = [ inputs.plasma-manager.homeModules.plasma-manager ];
-            home-manager.users.admin = import ./home/admin-desktop.nix;
-          }
-        ];
-      };
-    };
+            # Base system configuration
+            ./hosts/home-server/configuration.nix
 
-    # ISO image for installation
-    nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-        {
-          # Adopt the 26.11 default early (the minimal ISO ships ZFS support)
-          boot.zfs.forceImportRoot = false;
+            # Common modules
+            ./modules/base.nix
+            ./modules/networking.nix
+            ./modules/users.nix
 
-          # Add git and other tools to the installer
-          environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
-            git
-            vim
-            wget
-            curl
+            # Service modules
+            ./modules/services/plex.nix
+            ./modules/services/media-automation.nix
+            ./modules/services/torrent.nix
+            ./modules/services/monitoring.nix
+            ./modules/services/vpn.nix
+            ./modules/services/dashboard.nix
+
+            # Maintenance modules
+            ./modules/maintenance/cleanup.nix
+
+            # Home Manager integration
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.admin = import ./home/admin-server.nix;
+            }
           ];
-        }
-      ];
+        };
+
+        # Home Computer Configuration
+        home-computer = nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs pkgs-unstable; };
+          modules = [
+            ./hosts/home-computer/configuration.nix
+            ./modules/base.nix
+            ./modules/desktop/users.nix
+            ./modules/desktop/gpu.nix
+            ./modules/desktop/audio.nix
+            ./modules/desktop/bluetooth.nix
+            ./modules/desktop/fonts.nix
+            ./modules/desktop/plasma.nix
+            ./modules/desktop/applications.nix
+
+            # Home Manager integration
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.sharedModules = [ inputs.plasma-manager.homeModules.plasma-manager ];
+              home-manager.users.admin = import ./home/admin-desktop.nix;
+            }
+          ];
+        };
+      };
+
+      # ISO image for installation
+      nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          {
+            # Adopt the 26.11 default early (the minimal ISO ships ZFS support)
+            boot.zfs.forceImportRoot = false;
+
+            # Add git and other tools to the installer
+            environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
+              git
+              vim
+              wget
+              curl
+            ];
+          }
+        ];
+      };
     };
-  };
 }

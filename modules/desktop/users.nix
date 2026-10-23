@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Admin user for the home-computer (desktop) host.
@@ -14,7 +19,7 @@
       "audio"
       "input"
       "docker"
-      "kvm"        # Android emulator hardware virtualization via /dev/kvm
+      "kvm" # Android emulator hardware virtualization via /dev/kvm
     ];
     # Set on first boot. Change immediately with `passwd` after logging in.
     initialPassword = "admin";
