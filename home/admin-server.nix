@@ -79,12 +79,10 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
-
-    # We'll fetch the config from GitHub
-    extraConfig = ''
-      " Configuration will be loaded from ~/.config/nvim
-    '';
   };
+
+  # ~/.config/nvim is a symlink to the dotfiles repo, which owns init.lua
+  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
 
   # Fetch Neovim config from GitHub
   home.activation.cloneNeovimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

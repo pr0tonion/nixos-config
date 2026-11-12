@@ -68,6 +68,9 @@
     vimAlias = true;
   };
 
+  # ~/.config/nvim is a symlink to the dotfiles repo, which owns init.lua
+  xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
+
   home.activation.linkNixosConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p "$HOME/code"
     if [ ! -e "$HOME/code/nixos-config" ]; then
