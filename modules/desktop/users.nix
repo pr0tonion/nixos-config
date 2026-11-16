@@ -20,6 +20,7 @@
       "input"
       "docker"
       "kvm" # Android emulator hardware virtualization via /dev/kvm
+      "gamemode" # Lets gamemoded run its GPU/CPU helpers without a polkit password prompt
     ];
     # Set on first boot. Change immediately with `passwd` after logging in.
     initialPassword = "admin";
